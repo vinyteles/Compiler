@@ -86,14 +86,14 @@ def symbol_table_update(lexeme, token):
 
 def show_error_message(state):
     if(state == 1):
-        print("ERRO: Arquivo Vazio")
+        print("ERRO: Arquivo Vazio, linha " + str(line) + ", coluna " + str(column))
     if(state == 18):
-        print("ERRO: Literal incompleto")
+        print("ERRO: Literal incompleto, linha " + str(line) + ", coluna " + str(column))
     if(state == 20):
-        print("ERRO: Comentário incompleto")
+        print("ERRO: Comentário incompleto, linha " + str(line) + ", coluna " + str(column))
     if state == 4 or state == 6 or state == 8:
-        print("ERRO: Número incompleto")
-    if state == 24:
+        print("ERRO: Número incompleto, linha " + str(line) + ", coluna " + str(column))
+    if state == 23:
         print("ERRO: Caractere inválido na linguagem, linha " + str(line) + ", coluna " + str(column))
 
 def tokenization(lexeme, symbol_def, state):
