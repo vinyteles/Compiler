@@ -10,7 +10,7 @@ especial_char = [",", ";", ".",
 
 # literal_char = [":", "!", "?", "\\", "[", "'"]
 
-ignored_char = ['\t', ' ', '\n']
+ignored_char = ['\t', ' ', '\n', ""]
 
 symbol_table = {
     "inicio": {
@@ -129,7 +129,7 @@ state_dict = {
         1:20, 18:18, 20:20
     },
     "}":{
-        18:18, 20:21
+        18:18, 20:1
     },
     "EOF":{
         1:22
@@ -162,6 +162,7 @@ language_class = {
     19: "Lit",
     21: "Comentário",
     22: "EOF",
+    0: "ERRO",
     1: "ERRO",
     4: "ERRO",
     6: "ERRO",

@@ -5,11 +5,13 @@ text = ""
 line = 0
 column = 0
 count = 0
+
 def open_file():
     global text
     f = open('programa.p')
     text = f.read()
     return
+
 def take_symbol_and_def(count):
     if count == len(text):
         return "EOF", "EOF"
@@ -27,11 +29,22 @@ def update_column_and_line(symbol, state):
         line += 1
     return
 
-def add_symbol_to_lexeme(symbol, lexeme, state):
-    if symbol in ignored_char and state != 18 and state != 20:
+def is_ignored_char(symbol, state):
+
+    return symbol in ignored_char and state != 18 and state != 20
+
+def is_comentary(symbol, state):
+    return state == 20 and symbol == '}'
+
+def update_lexeme(symbol, lexeme, state):
+    if is_ignored_char(symbol, state):
         return lexeme
 
+    if is_comentary(symbol, state):
+        return ''
+
     return lexeme + symbol
+
 def scanner():
     global line, column, count
     if len(text) == 0:
@@ -43,13 +56,13 @@ def scanner():
     while count <= len(text):
         symbol, symbol_def = take_symbol_and_def(count)
 
-        lexeme = add_symbol_to_lexeme(symbol, lexeme, state)
+        lexeme = update_lexeme(symbol, lexeme, state)
 
         state = afd(symbol_def, state)
 
         next_symbol = "" if count >= len(text) - 1 else text[count + 1]
 
-        if not afd(find_symbol_def(next_symbol), state) or count == len(text) - 1:
+        if not afd(find_symbol_def(next_symbol), state):
             token = tokenization(lexeme, symbol_def, state)
             count += 1
             update_column_and_line(symbol, state)
@@ -85,6 +98,8 @@ def symbol_table_update(lexeme, token):
     return symbol_table[lexeme]
 
 def show_error_message(state):
+    if(state == 0):
+        print("ERRO: Token não reconhecido, linha " + str(line) + ", coluna " + str(column))
     if(state == 1):
         print("ERRO: Arquivo Vazio, linha " + str(line) + ", coluna " + str(column))
     if(state == 18):
