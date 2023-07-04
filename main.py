@@ -1,16 +1,8 @@
-from structures import *
-from service import *
-import json
+from parser.parser import parser
 
 def main():
-    while 1:
-        token = scanner()
-        if not token:
-            break
-        print(token)
+    parser()
 
-    # print("------------- TABELA DE SIMBOLOS -----------------")
-    # print(json.dumps(symbol_table, indent=4))
     return
 
 main()

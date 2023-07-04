@@ -1,4 +1,4 @@
-from structures import *
+from scanner.structures import *
 
 token_list = []
 text = ""
