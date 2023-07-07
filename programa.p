@@ -1,1 +1,4 @@
-teste ihu
+inicio
+    varinicio
+    literal A;
+fim
