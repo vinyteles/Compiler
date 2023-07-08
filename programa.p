@@ -1,5 +1,5 @@
 inicio
-    varinicio
-    literal A;
-    varfim;
+varinicio
+inteiro B
+varfim;
 fim

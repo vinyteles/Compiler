@@ -81,7 +81,7 @@ def afd(current_class, current_state):
 
 def find_class(lexeme, state):
     if lexeme in symbol_table:
-        return lexeme
+        return symbol_table[lexeme]["class"]
 
     return language_class[state]
 

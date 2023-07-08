@@ -30,7 +30,7 @@ rules = {
   "29": ["CP", "CMD", "CP"],
   "30": ["CP", "COND", "CP"],
   "31": ["CP", "fimse"],
-  "32": ["A", "RA"],
+  "32": ["A", "R", "A"],
   "33": ["R", "CABR", "CPR"],
   "34": ["CABR", "repita", "ab_p", "EXP_R", "fc_p"],
   "35": ["CPR", "ES", "CPR"],

@@ -46,14 +46,14 @@ symbol_table = {
         "lexeme": "fimse",
         "class": "fimse",
         "type": "fimse"
-    },"Repita": {
-        "lexeme": "Repita",
-        "class": "Repita",
-        "type": "Repita"
-    },"fimRepita": {
-        "lexeme": "fimRepita",
-        "class": "fimRepita",
-        "type": "fimRepita"
+    },"repita": {
+        "lexeme": "repita",
+        "class": "repita",
+        "type": "repita"
+    },"fimrepita": {
+        "lexeme": "fimrepita",
+        "class": "fimrepita",
+        "type": "fimrepita"
     },"fim": {
         "lexeme": "fim",
         "class": "fim",
