@@ -98,7 +98,6 @@ def step(action_goto, a, fix=False, next_a=None):
     var_action = find_action(action_goto, s, a)
 
     if var_action[0] == 'S':
-        # empilhe p na pilha
         t = var_action[1:]
         stack.append(int(t))
 
@@ -112,17 +111,13 @@ def step(action_goto, a, fix=False, next_a=None):
     elif var_action[0] == 'R':
         var_rule = find_rule(var_action[1:])
 
-        #desempilha beta times
         var_size_beta = len(var_rule[1:])
         stack_pop_beta_times(var_size_beta)
 
-        # faça t ser o topo da pilha
         t = stack_top()
-        #empilhe goto[t, A]
         var_goto = find_go_to(action_goto, t, var_rule[0])
         stack.append(var_goto)
 
-        #Imprima A -> B (imprimir direito dps)
         print_rule(var_rule)
     return var_action, a
 
@@ -136,14 +131,11 @@ def analysis(action_goto):
         var_action, a = step(action_goto, a)
 
         if var_action == "Acc":
-            # tirar o print e retornar None
             return "done"
         elif var_action == "nan":
-            # return None
             error_type, correct_input = error_handler(s, a, action_goto, symbol_table)
             if (error_type == 'Fix'):
                 correct_a = {'class': correct_input}
-                # chama a funcao analysis com o novo a
                 var_action, a = step(action_goto, correct_a, fix=True, next_a=a)
             else:
                 return None
