@@ -2,8 +2,8 @@ from scanner.structures import *
 
 token_list = []
 text = ""
-line = 0
-column = 0
+line = 1
+column = 1
 count = 0
 
 def open_file():
@@ -25,7 +25,7 @@ def update_column_and_line(symbol, state):
     global line, column
     column += 1
     if symbol == ignored_char[2] and state != 18 and state != 20:
-        column = 0
+        column = 1
         line += 1
     return
 
@@ -72,7 +72,7 @@ def scanner():
         update_column_and_line(symbol, state)
 
 
-    return token
+    return token, line, column
 
 def afd(current_class, current_state):
     if (current_class not in state_dict) or (current_state not in state_dict[current_class]):

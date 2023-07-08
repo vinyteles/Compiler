@@ -8,6 +8,10 @@ stack = collections.deque([0])
 beta = None
 t = None
 s = 0
+line = 0
+column = 0
+lline = 0
+lcolumn = 0
 
 def open_file():
     action_goto = pd.read_csv('parser/action_goto.csv')
@@ -42,7 +46,8 @@ def find_action(action, s, a):
 def find_go_to(action_goto, t, var_rule):
     return int(action_goto.loc[t].at[var_rule])
 
-def error_handler(row: int, column: str, action, sb):
+def error_handler(row: int, a, action, sb):
+  global lline, lcolumn
   fix_map = {
       ';':'pt_v',
       '(': 'ab_p',
@@ -53,11 +58,13 @@ def error_handler(row: int, column: str, action, sb):
   }
   correct_options = get_correct_options(row, action)
   if len(correct_options) == 1 and correct_options[0] in fix_map:
+    print(f"Warning! Sintaxe inesperada: '{a['class']}', linha {lline}, coluna {lcolumn}. Opcao permitida: '{correct_options[0]}'.")
     return 'Fix', fix_map[correct_options[0]]
   elif len(correct_options) == 1 and correct_options[0] in sb:
+    print(f"Warning! Sintaxe inesperada: '{a['class']}', linha {lline}, coluna {lcolumn}. Opcao permitida: '{correct_options[0]}'.")
     return 'Fix', correct_options[0]
   else:
-    print(f"Sintaxe inesperada: '{column}'. Opcoes permitidas: {correct_options}")
+    print(f"Panic! Sintaxe inesperada: '{a['class']}', linha {lline}, coluna {lcolumn}. Opcoes permitidas: {correct_options}")
     return 'Panic', None
 
 def get_correct_options(row_index, action):
@@ -86,22 +93,21 @@ def get_correct_options(row_index, action):
 
 
 def step(action_goto, a, fix=False, next_a=None):
-    global s, t, stack
+    global s, t, stack, line, column, lline, lcolumn
     s = stack_top()
     var_action = find_action(action_goto, s, a)
-    print("s -> " + str(s) + ", aclass -> " + str(a["class"]) + ", varaction -> " + str(var_action))
 
     if var_action[0] == 'S':
         # empilhe p na pilha
         t = var_action[1:]
         stack.append(int(t))
-        print("shift " + t)
 
         if not fix:
-            a = scanner()
+            lline = line
+            lcolumn = column
+            a, line, column = scanner()
         else:
             a = next_a
-        print("#    TOKEN: " + str(a) + "                 #")
 
     elif var_action[0] == 'R':
         var_rule = find_rule(var_action[1:])
@@ -113,19 +119,18 @@ def step(action_goto, a, fix=False, next_a=None):
         # faça t ser o topo da pilha
         t = stack_top()
         #empilhe goto[t, A]
-        print("t: " + str(t) + ", A: " + str(var_rule[0]), end = "")
         var_goto = find_go_to(action_goto, t, var_rule[0])
         stack.append(var_goto)
-        print(", go_to " + str(var_goto))
 
         #Imprima A -> B (imprimir direito dps)
         print_rule(var_rule)
     return var_action, a
 
 def analysis(action_goto):
-    global s, t, stack
-    a = scanner()
-    print("#    TOKEN: " + str(a) + "                 #")
+    global s, t, stack, line, column, lline, lcolumn
+    lline = line
+    lcolumn = column
+    a, line, column = scanner()
 
     while 1:
         var_action, a = step(action_goto, a)
@@ -137,18 +142,16 @@ def analysis(action_goto):
             # return None
             error_type, correct_input = error_handler(s, a, action_goto, symbol_table)
             if (error_type == 'Fix'):
-                print(f"{error_type} | {correct_input}")
                 correct_a = {'class': correct_input}
                 # chama a funcao analysis com o novo a
                 var_action, a = step(action_goto, correct_a, fix=True, next_a=a)
             else:
-                print(f"{error_type}!")
                 return None
 
 
 def parser():
     action_goto = open_file()
 
-    print(analysis(action_goto))
+    analysis(action_goto)
 
     return 1
