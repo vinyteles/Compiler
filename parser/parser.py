@@ -2,7 +2,7 @@ import collections
 import pandas as pd
 from scanner.scanner import scanner
 from parser.structures import *
-
+from scanner.structures import symbol_table
 df = None
 stack = collections.deque([0])
 beta = None
@@ -42,20 +42,47 @@ def find_action(action, s, a):
 def find_go_to(action_goto, t, var_rule):
     return int(action_goto.loc[t].at[var_rule])
 
-def error_handler(s: int, a: str, df):
+def error_handler(row: int, column: str, action, sb):
   fix_map = {
       ';':'pt_v',
       '(': 'ab_p',
       ')': 'fc_p',
-      'entao': 'entao'
+      'entao': 'entao',
+      '<-': 'rcb',
+      ',': 'vir',
   }
-  error = df.loc[s, a]
-  print(error)
-  if ('Opcao' in error and '"' in error):
-    correct_input = error[error.index('"')+1]
-    return 'Fix', fix_map[correct_input]
+  correct_options = get_correct_options(row, action)
+  if len(correct_options) == 1 and correct_options[0] in fix_map:
+    return 'Fix', fix_map[correct_options[0]]
+  elif len(correct_options) == 1 and correct_options[0] in sb:
+    return 'Fix', correct_options[0]
   else:
+    print(f"Sintaxe inesperada: '{column}'. Opcoes permitidas: {correct_options}")
     return 'Panic', None
+
+def get_correct_options(row_index, action):
+    type_map = {
+          'pt_v': ';',
+          'id': 'identificador',
+          'vir': ',',
+          'lit': 'constante literal',
+          'num': 'constante numerica',
+          'rcb': '<-',
+          'opm': 'operador aritmetico',
+          'ab_p': '(',
+          'fc_p': ')',
+          'opr': 'operador relacional'
+    }
+    empty_columns = []
+    row = action.iloc[row_index]
+    for column in action.columns:
+        if (column == '$'): break
+        if (not pd.isnull(row[column])):
+            if(column in type_map):
+                empty_columns.append(type_map[column])
+            else:
+                empty_columns.append(column)
+    return empty_columns
 
 def analysis(action_goto):
     global s, t, stack
@@ -99,16 +126,15 @@ def analysis(action_goto):
             return "done"
 
         else:
-            print("erro")
             return None
-            # error_type, fixed_input = error_handler(s, a, action)
+            # error_type, fixed_input = error_handler(s, a, action_goto, symbol_table)
             # if (error_type == 'Fix'):
             #     print(f"{error_type} | {fixed_input}")
-            #     # chama a funcao analysis com a entrada certa
-            #     analysis(s, fixed_input)
-            #     # chama a funcao analysis com o 'a' que deu erro novamente (o original)
+            #     # chama a funcao analysis com o novo a
             # else:
             #     print(f"{error_type}!")
+            #     return None
+
 
 def parser():
     action_goto = open_file()
