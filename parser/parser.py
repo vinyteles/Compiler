@@ -41,7 +41,7 @@ def find_action(action, s, a):
     return action.loc[s].at[a["class"]]
 
 def find_go_to(go_to, t, var_rule):
-    return go_to.loc[t].at[var_rule[0]]
+    return int(go_to.loc[t].at[var_rule])
 
 def analysis(action, go_to):
     global s, t, stack
@@ -70,7 +70,7 @@ def analysis(action, go_to):
             # faça t ser o topo da pilha
             t = stack_top()
             #empilhe goto[t, A]
-            var_goto = int(find_go_to(go_to, t, var_rule[0]))
+            var_goto = find_go_to(go_to, t, var_rule[0])
             stack.append(var_goto)
             print("go_to " + str(var_goto))
 
