@@ -1,5 +1,5 @@
 inicio
 varinicio
 inteiro B;
-varfim;
+varfim
 fim
