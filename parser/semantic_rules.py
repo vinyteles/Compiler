@@ -99,7 +99,7 @@ def semantic_rule_13(var_rule, token, var_size_beta, semantic_stack):
     semantic_stack.pop()
     token_id = semantic_stack.pop()
 
-    if token_id["lexeme"] in symbol_table:
+    if token_id["lexeme"] in symbol_table  and token_id["type"] != "Nulo":
         if token_id["type"] == "int":
             c_lines.append(f'scanf("%d", &{token_id["lexeme"]});\n')
         elif token_id["type"] == "double":
@@ -111,14 +111,21 @@ def semantic_rule_13(var_rule, token, var_size_beta, semantic_stack):
     return token
 
 def semantic_rule_14(var_rule, token, var_size_beta, semantic_stack):
-
     semantic_stack.pop()
-    c_lines.append(f'printf({str(semantic_stack.pop()["lexeme"])});\n')
+    token_arg = semantic_stack.pop()
+
+    if token_arg["type"] == "int":
+        c_lines.append(f'printf("%d",  {token_arg["lexeme"]});\n')
+    elif token_arg["type"] == "double":
+        c_lines.append(f'printf("%lf", {token_arg["lexeme"]});\n')
+    else:
+        c_lines.append(f'printf("%s", {token_arg["lexeme"]});\n')
+
     return token
 
 def semantic_rule_15(var_rule, token, var_size_beta, semantic_stack):
     token = semantic_stack.pop()
-
+    print(token)
     return token
 
 
@@ -148,7 +155,7 @@ def semantic_rule_19(var_rule, token, var_size_beta, semantic_stack):
     else:
         print("Erro! variavel não declarada")
 
-    c_lines.append(f'{token_id["lexeme"]} {tmp_rcb["lexeme"]} {tmp_ld["lexeme"]}\n')
+    c_lines.append(f'{token_id["lexeme"]} = {tmp_ld["lexeme"]};\n')
 
     return token
 

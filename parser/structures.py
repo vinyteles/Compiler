@@ -83,7 +83,7 @@ semantics_rules = {
   "39": {}
 }
 
-c_beginning = "#include<stdio.h>\ntypedef char literal[256];\nint main(void)\n{"
+c_beginning = "#include<stdio.h>\n\ntypedef char literal[256];\n\nint main(void)\n{\n"
 c_ending = "\nreturn 0;\n}\n"
 
 
