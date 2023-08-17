@@ -125,7 +125,6 @@ def semantic_rule_14(var_rule, token, var_size_beta, semantic_stack):
 
 def semantic_rule_15(var_rule, token, var_size_beta, semantic_stack):
     token = semantic_stack.pop()
-    print(token)
     return token
 
 
