@@ -1,7 +1,7 @@
 import collections
 import pandas as pd
 
-from parser.semantic_rules import choose_semantic_rule
+from parser.semantic_rules import choose_semantic_rule, get_c_lines
 from scanner.scanner import scanner
 from parser.structures import *
 from scanner.structures import symbol_table
@@ -123,6 +123,7 @@ def step(action_goto, a, fix=False, next_a=None):
             #print_semantic_stack(semantic_stack.copy())
             a, line, column = scanner()
         else:
+            semantic_stack.append(a)
             a = next_a
 
     elif var_action[0] == 'R':
@@ -151,6 +152,8 @@ def analysis(action_goto):
 
     while 1:
         var_action, a = step(action_goto, a)
+        if(a['class'] == 'ERRO'):
+            a, line, column = scanner()
 
         if var_action == "Acc":
             return "done"
@@ -159,14 +162,33 @@ def analysis(action_goto):
             if (error_type == 'Fix'):
                 correct_a = {'class': correct_input}
                 var_action, a = step(action_goto, correct_a, fix=True, next_a=a)
+                if(a['class'] == 'ERRO'):
+                    a, line, column = scanner()
             else:
-                return None
+                return False
+            
+    return True
 
 
 def parser():
     action_goto = open_file()
-    print(c_beginning)
-    analysis(action_goto)
-    print(c_ending)
+    if analysis(action_goto):
+        c_lines = get_c_lines()
+        c_lines.insert(0, c_beginning)
+        c_lines.append(c_ending)
 
+        f = open("programa.c","w")
+        indent = 1
+        f.write(c_lines[0])
+
+        for line in c_lines[1:]:
+            if line[0] == '}':
+                indent-=1
+            for i in range(indent):
+                f.write("  ")
+            f.write(line)
+            if line[0] == '{':
+                indent+=1
+        f.close()
+        
     return 1
