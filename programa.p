@@ -1,5 +1,9 @@
 inicio
 varinicio
-inteiro B;
-varfim
+inteiro AF, C;
+varfim;
+
+escreva B;
+
+
 fim

@@ -1,10 +1,13 @@
 import collections
 import pandas as pd
+
+from parser.semantic_rules import choose_semantic_rule
 from scanner.scanner import scanner
 from parser.structures import *
 from scanner.structures import symbol_table
 df = None
-stack = collections.deque([0])
+sintatic_stack = collections.deque([0])
+semantic_stack = collections.deque()
 beta = None
 t = None
 s = 0
@@ -20,10 +23,10 @@ def open_file():
 def find_rule(rule):
     return rules[rule]
 
-def stack_pop_beta_times(var_size_beta):
-    global stack
+def sintatic_stack_pop_beta_times(var_size_beta):
+    global sintatic_stack
     while var_size_beta:
-        stack.pop()
+        sintatic_stack.pop()
         var_size_beta -= 1
 
     return None
@@ -37,8 +40,9 @@ def print_rule(var_rule):
     print("")
     return None
 
-def stack_top():
-    return stack[-1]
+def sintatic_stack_top():
+    top_tmp = sintatic_stack[-1]
+    return top_tmp
 
 def find_action(action, s, a):
     return str(action.loc[s].at[a["class"]])
@@ -92,40 +96,58 @@ def get_correct_options(row_index, action):
     return empty_columns
 
 
-def step(action_goto, a, fix=False, next_a=None):
-    global s, t, stack, line, column, lline, lcolumn
-    s = stack_top()
-    var_action = find_action(action_goto, s, a)
+def print_semantic_stack(tmp_semantic_stack):
+    print("stack beginning -------------------")
+    while len(tmp_semantic_stack):
 
+        print("coeee -> " + str(tmp_semantic_stack.pop()))
+
+    print("stack ending -------------------\n")
+
+    return
+
+
+def step(action_goto, a, fix=False, next_a=None):
+    global s, t, sintatic_stack, semantic_stack, line, column, lline, lcolumn
+    s = sintatic_stack_top()
+    var_action = find_action(action_goto, s, a)
+    #print(str(var_action))
     if var_action[0] == 'S':
         t = var_action[1:]
-        stack.append(int(t))
+        sintatic_stack.append(int(t))
 
         if not fix:
             lline = line
             lcolumn = column
+            semantic_stack.append(a)
+            #print_semantic_stack(semantic_stack.copy())
             a, line, column = scanner()
         else:
             a = next_a
 
     elif var_action[0] == 'R':
-        var_rule = find_rule(var_action[1:])
+        rule_number = var_action[1:]
+        var_rule = find_rule(rule_number)
 
         var_size_beta = len(var_rule[1:])
-        stack_pop_beta_times(var_size_beta)
+        sintatic_stack_pop_beta_times(var_size_beta)
 
-        t = stack_top()
+        t = sintatic_stack_top()
         var_goto = find_go_to(action_goto, t, var_rule[0])
-        stack.append(var_goto)
+        #print("state " + str(t))
+        #print("goto " + str(var_goto))
+        sintatic_stack.append(var_goto)
+        semantic_stack = choose_semantic_rule(rule_number, var_rule, var_size_beta, semantic_stack)
+        #print_semantic_stack(semantic_stack.copy())
 
-        print_rule(var_rule)
     return var_action, a
 
 def analysis(action_goto):
-    global s, t, stack, line, column, lline, lcolumn
+    global s, t, sintatic_stack, line, column, lline, lcolumn
     lline = line
     lcolumn = column
     a, line, column = scanner()
+    #print("a -> " + str(a['lexeme']))
 
     while 1:
         var_action, a = step(action_goto, a)
@@ -143,7 +165,8 @@ def analysis(action_goto):
 
 def parser():
     action_goto = open_file()
-
+    print(c_beginning)
     analysis(action_goto)
+    print(c_ending)
 
     return 1

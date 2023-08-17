@@ -40,3 +40,50 @@ rules = {
   "39": ["A", "fim"]
 }
 
+# fiz o dos prints
+semantics_rules = {
+  "1": {},
+  "2": {},
+  "3": {},
+  "4": {},
+  "5": ["print_three_empty_lines"],
+  "6":{},
+  "7":{},
+  "8":{},
+  "9": ["receive_type", ],
+  "10": ["TIPO", "real"],
+  "11": ["TIPO", "literal"],
+  "12": ["A", "ES", "A"],
+  "13": ["ES", "leia", "id", "pt_v"],
+  "14": ["ES", "escreva", "ARG", "pt_v"],
+  "15": ["ARG", "lit"],
+  "16": ["ARG", "num"],
+  "17": ["ARG", "id"],
+  "18": ["A", "CMD", "A"],
+  "19": ["CMD", "id", "atr", "LD", "pt_v"],
+  "20": ["LD", "OPRD", "opm", "OPRD"],
+  "21": ["LD", "OPRD"],
+  "22": ["OPRD", "id"],
+  "23": ["OPRD", "num"],
+  "24": ["A", "COND", "A"],
+  "25": ["COND", "CAB", "CP"],
+  "26": ["CAB", "se", "ab_p", "EXP_R", "fc_p", "então"],
+  "27": ["EXP_R", "OPRD", "opr", "OPRD"],
+  "28": {},
+  "29": {},
+  "30": {},
+  "31": {},
+  "32": ["A", "R", "A"],
+  "33": ["R", "CABR", "CPR"],
+  "34": ["CABR", "repita", "ab_p", "EXP_R", "fc_p"],
+  "35": ["CPR", "ES", "CPR"],
+  "36": ["CPR", "CMD", "CPR"],
+  "37": ["CPR", "COND", "CPR"],
+  "38": ["CPR", "fimrepita"],
+  "39": {}
+}
+
+c_beginning = "#include<stdio.h>\ntypedef char literal[256];\nint main(void)\n{"
+c_ending = "\nreturn 0;\n}\n"
+
+
